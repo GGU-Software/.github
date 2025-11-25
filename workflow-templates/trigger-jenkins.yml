@@ -11,11 +11,11 @@ jobs:
     steps:
     - name: Trigger Jenkins via REST API
       env:
-        JENKINS_USER: ${{ secrets.JENKINS_USER }}
-        JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+        JENKINS_USER: gguUser
+        JENKINS_TOKEN: 118bc467e957cc18ee719b1b01d415d655
         REPO_NAME: ${{ github.repository }}
       run: |
         echo "Triggering Jenkins for $REPO_NAME..."
         curl -X POST \
           -u "$JENKINS_USER:$JENKINS_TOKEN" \
-          "http://jenkins.internal:8080/job/${REPO_NAME}/build?delay=0sec"
+          "http://localhost:8080/job/CI-Build/build?delay=0sec&repo=${REPO_NAME}"
