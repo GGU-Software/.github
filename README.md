@@ -1,70 +1,26 @@
 # GGU-Software Organization Workflows
 
-This repository contains shared workflow templates for the GGU-Software GitHub organization.
+This repository no longer contains workflow templates.
 
-## Available Workflow Templates
+The shared GitHub Actions pipelines of the organization live in
+[ggu-build-management](https://github.com/GGU-Software/ggu-build-management) under
+`.github/workflows/` and are called as reusable workflows, not copied:
 
-### Trigger Jenkins Build
+| Workflow | Purpose |
+|----------|---------|
+| `delphi-ci.yml` | Push CI: triggers the Jenkins `CI` job for repositories listed in `buildconfig.json` |
+| `trigger-jenkins.yml` | Triggers any parameterized Jenkins job and optionally waits for it |
+| `preview-ggu.yml` | Preview build of a ticket branch |
+| `publish-ggu.yml` | Release build and publishing |
+| `secure-and-package.yml` | Signing, encryption and packaging of a prebuilt executable |
 
-Workflow template for triggering Jenkins release builds from GitHub Actions.
+Example caller:
 
-**Location:** `workflow-templates/trigger-jenkins.yml`
+```yaml
+jobs:
+  ci:
+    uses: GGU-Software/ggu-build-management/.github/workflows/delphi-ci.yml@main
+```
 
-**Features:**
-- Manual workflow dispatch with input parameters
-- Supports all GGU applications
-- Optional approval step skip
-- Integration with existing Jenkins build infrastructure
-
-**Required Organization Secrets:**
-
-Configure these secrets at the organization level:
-- `JENKINS_URL` - The Jenkins server URL
-- `JENKINS_USER` - The Jenkins username for API access
-- `JENKINS_TOKEN` - The Jenkins API token
-
-**Usage:**
-
-1. Add the workflow template to your repository from the "Actions" tab
-2. Configure the workflow inputs:
-   - **app_name**: Application name (e.g., GGU-CONNECT, GGU-RETAIN)
-   - **version**: Version number (e.g., 1.46, 4.8.1.2)
-   - **skip_approval**: Whether to skip manual approval (default: false)
-3. Run the workflow from the Actions tab
-
-**Parameters:**
-
-| Parameter | Description | Required | Default |
-|-----------|-------------|----------|---------|
-| app_name | Application name | Yes | - |
-| version | Version number | Yes | - |
-| skip_approval | Skip manual approval step | No | false |
-
-**Security Notes:**
-
-- The workflow requires Jenkins credentials to be configured as organization secrets
-- By default, manual approval is required in Jenkins UI
-- Skip approval only when explicitly needed and authorized
-
-## Setting Up Organization Secrets
-
-1. Go to organization settings: https://github.com/organizations/GGU-Software/settings/secrets/actions
-2. Click "New organization secret"
-3. Add the following secrets:
-   - Name: `JENKINS_URL`, Value: Your Jenkins server URL
-   - Name: `JENKINS_USER`, Value: Your Jenkins username
-   - Name: `JENKINS_TOKEN`, Value: Your Jenkins API token
-4. Configure repository access for the secrets
-
-## Using Workflow Templates
-
-When creating a new workflow in any repository:
-
-1. Go to the repository's "Actions" tab
-2. Click "New workflow"
-3. Select "trigger-jenkins.yml" from the organization templates
-4. Customize if needed and commit
-
-## Support
-
-For issues or questions about these workflow templates, please contact the GGU development team.
+Jenkins credentials are provided by the self-hosted runner. Repositories need no Jenkins
+secrets. Setup and rollout: `pipelines/CI build/README.md` in ggu-build-management.
